@@ -7,16 +7,12 @@ export async function GET() {
     const pool = await getDb();
 
 const result = await pool.request().query(`
-  SELECT TOP (5)
-    TripID,
-    DriverID,
-    UnitID,
-    Miles,
-    MinimumRevenue,
-    RequiredRevenue
+  SELECT TripID, DriverID, UnitID, Miles, MinimumRevenue, RequiredRevenue
   FROM dbo.Trips
-  ORDER BY TripID DESC;
+  WHERE TripID BETWEEN 190 AND 210
+  ORDER BY TripID;
 `);
+
 
 
     return NextResponse.json({
