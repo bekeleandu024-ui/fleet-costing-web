@@ -6,9 +6,18 @@ export async function GET() {
   try {
     const pool = await getDb();
 
-    const result = await pool
-      .request()
-      .query("SELECT TOP 5 TripID, Miles, Revenue FROM dbo.Trips ORDER BY TripID");
+const result = await pool.request().query(`
+  SELECT TOP (5)
+    TripID,
+    DriverID,
+    UnitID,
+    Miles,
+    MinimumRevenue,
+    RequiredRevenue
+  FROM dbo.Trips
+  ORDER BY TripID DESC;
+`);
+
 
     return NextResponse.json({
       ok: true,
