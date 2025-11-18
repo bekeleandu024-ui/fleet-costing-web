@@ -9,6 +9,7 @@ export async function GET() {
       SELECT TOP (50)
         t.TripID,
         t.RawTripId,
+        t.Status             AS TripStatus,
         t.WeekStart,
         t.Miles,
         t.BorderCrossings,
@@ -19,25 +20,37 @@ export async function GET() {
         t.RequiredRevenue,
 
         d.DriverID,
-        d.Name       AS DriverName,
-        d.Type       AS DriverType,
+        d.Name               AS DriverName,
+        d.Type               AS DriverType,
 
         u.UnitID,
         u.UnitNumber,
 
-        -- last TripCost for this trip (if any)
-        c.CostID,
-        c.TotalCPM,
-        c.TotalCost,
-        c.Revenue    AS CostRevenue,
-        c.Profit,
-        c.IsManual,
-        c.ManualTotalCost,
-        c.ManualReason,
-        c.CreatedAt  AS CostCreatedAt
+        o.OrderID,
+        o.Origin,
+        o.Destination,
+        o.Miles              AS OrderMiles,
+        o.Revenue            AS OrderRevenue,
+        o.Status             AS OrderStatus,
+
+        c.CustomerID,
+        c.CustomerCode,
+        c.Name               AS CustomerName,
+
+        cost.CostID,
+        cost.TotalCPM,
+        cost.TotalCost,
+        cost.Revenue         AS CostRevenue,
+        cost.Profit,
+        cost.IsManual,
+        cost.ManualTotalCost,
+        cost.ManualReason,
+        cost.CreatedAt       AS CostCreatedAt
       FROM dbo.Trips t
-      LEFT JOIN dbo.Drivers d ON d.DriverID = t.DriverID
-      LEFT JOIN dbo.Units   u ON u.UnitID   = t.UnitID
+      LEFT JOIN dbo.Drivers   d ON d.DriverID   = t.DriverID
+      LEFT JOIN dbo.Units     u ON u.UnitID     = t.UnitID
+      LEFT JOIN dbo.Orders    o ON o.OrderID    = t.OrderID
+      LEFT JOIN dbo.Customers c ON c.CustomerID = o.CustomerID
       OUTER APPLY (
         SELECT TOP (1)
           tc.CostID,
@@ -52,8 +65,8 @@ export async function GET() {
         FROM dbo.TripCosts tc
         WHERE tc.TripID = t.TripID
         ORDER BY tc.CreatedAt DESC, tc.CostID DESC
-      ) c
-      WHERE t.Miles IS NOT NULL      -- skip the completely-empty test rows
+      ) AS cost
+      WHERE t.Miles IS NOT NULL   -- skip completely-empty test rows
       ORDER BY t.TripID DESC;
     `);
 

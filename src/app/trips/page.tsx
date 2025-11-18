@@ -15,6 +15,13 @@ type TripRow = {
   IsManual: boolean | null;
   ManualTotalCost: number | null;
   ManualReason: string | null;
+
+  // new optional fields from Orders & Customers
+  TripStatus?: string | null;
+  Origin?: string | null;
+  Destination?: string | null;
+  OrderRevenue?: number | null;
+  CustomerName?: string | null;
 };
 
 export default function TripsPage() {
