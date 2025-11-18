@@ -1,65 +1,66 @@
-import Image from "next/image";
+import Link from 'next/link';
 
 export default function Home() {
+  const sections = [
+    {
+      title: 'Core Operations',
+      links: [
+        { name: 'Dashboard', href: '/dashboard', desc: 'Key metrics and KPIs' },
+        { name: 'Trips & Costing', href: '/trips', desc: 'View and manage trip costs' },
+        { name: 'Orders', href: '/orders', desc: 'Create and manage orders' },
+        { name: 'Drivers & Fleet', href: '/drivers', desc: 'Driver and unit management' },
+      ],
+    },
+    {
+      title: 'Dispatch & Tracking',
+      links: [
+        { name: 'Dispatch Board', href: '/dispatch', desc: 'Kanban-style dispatch view' },
+        { name: 'Active Tracking', href: '/tracking', desc: 'Track active trips' },
+      ],
+    },
+    {
+      title: 'Analytics & Reports',
+      links: [
+        { name: 'Cost Analytics', href: '/analytics/costs', desc: 'Performance by driver type & customer' },
+        { name: 'Trip Reports', href: '/reports/trips', desc: 'Detailed trip reports' },
+      ],
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-slate-950 text-slate-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Fleet Costing Management</h1>
+        <p className="text-slate-400 mb-8">
+          Next.js + SQL Server fleet management system
+        </p>
+
+        <div className="grid gap-8 md:grid-cols-3">
+          {sections.map((section) => (
+            <div key={section.title} className="space-y-4">
+              <h2 className="text-lg font-semibold text-slate-300 border-b border-slate-800 pb-2">
+                {section.title}
+              </h2>
+              <div className="space-y-3">
+                {section.links.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="block rounded-lg border border-slate-800 bg-slate-900/70 p-4 hover:bg-slate-900 hover:border-slate-700 transition-colors"
+                  >
+                    <div className="font-medium mb-1">{link.name}</div>
+                    <div className="text-sm text-slate-400">{link.desc}</div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="mt-8 pt-8 border-t border-slate-800 text-sm text-slate-500">
+          <p>Database: FleetNew (SQL Server) | Framework: Next.js 15 App Router</p>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

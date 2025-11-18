@@ -167,6 +167,12 @@ export default function TripsPage() {
                   <td className="px-3 py-2">{t.ManualReason ?? ''}</td>
                   <td className="px-3 py-2 text-center space-x-2">
                     <button
+                      className="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-xs"
+                      onClick={() => window.location.href = `/trips/${t.TripID}`}
+                    >
+                      View
+                    </button>
+                    <button
                       className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs"
                       disabled={busyTripId === t.TripID}
                       onClick={() => recalcTrip(t.TripID)}
