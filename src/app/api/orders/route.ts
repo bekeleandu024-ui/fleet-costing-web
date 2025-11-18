@@ -12,16 +12,14 @@ export async function GET() {
     const result = await pool.request().query(`
       SELECT TOP (100)
         o.OrderID,
-        o.OrderRef,
         o.CustomerID,
-        c.Name               AS Customer,
+        o.Customer,
         o.Origin,
         o.Destination,
         o.Miles,
         o.Revenue,
         o.Status
       FROM dbo.Orders o
-      LEFT JOIN dbo.Customers c ON c.CustomerID = o.CustomerID
       ORDER BY o.OrderID DESC;
     `);
 
@@ -42,7 +40,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const customerID = body.customerID ? Number(body.customerID) : null;
+    const customer = (body.customer as string | undefined) ?? null;
     const origin = body.origin as string | undefined;
     const destination = body.destination as string | undefined;
     const miles = Number(body.miles);
@@ -63,16 +61,16 @@ export async function POST(req: Request) {
 
     const insertResult = await pool
       .request()
-      .input('CustomerID', sql.Int, customerID)
+      .input('Customer', sql.NVarChar(100), customer)
       .input('Origin', sql.NVarChar(400), origin)
       .input('Destination', sql.NVarChar(400), destination)
       .input('Miles', sql.Int, miles)
       .input('Revenue', sql.Decimal(10, 2), revenue)
-      .input('Status', sql.NVarChar(50), 'New')
+      .input('Status', sql.NVarChar(50), 'Planned')
       .query(`
-        INSERT INTO dbo.Orders (CustomerID, Origin, Destination, Miles, Revenue, Status)
+        INSERT INTO dbo.Orders (Customer, Origin, Destination, Miles, Revenue, Status)
         OUTPUT INSERTED.*
-        VALUES (@CustomerID, @Origin, @Destination, @Miles, @Revenue, @Status);
+        VALUES (@Customer, @Origin, @Destination, @Miles, @Revenue, @Status);
       `);
 
     const newOrder = insertResult.recordset[0];
