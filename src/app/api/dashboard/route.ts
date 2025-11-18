@@ -27,7 +27,9 @@ export async function GET() {
         TotalMinRev        = SUM(CAST(t.MinimumRevenue AS DECIMAL(18,2))),
         TotalRevenue       = SUM(CASE WHEN lc.rn = 1 THEN CAST(lc.Revenue AS DECIMAL(18,2)) ELSE 0 END),
         TotalCost          = SUM(CASE WHEN lc.rn = 1 THEN CAST(lc.TotalCost AS DECIMAL(18,2)) ELSE 0 END),
-        TotalProfit        = SUM(CASE WHEN lc.rn = 1 THEN CAST(lc.Profit AS DECIMAL(18,2)) ELSE 0 END)
+        TotalProfit        = SUM(CASE WHEN lc.rn = 1 THEN CAST(lc.Profit AS DECIMAL(18,2)) ELSE 0 END),
+        ProfitableTrips    = COUNT(DISTINCT CASE WHEN lc.rn = 1 AND lc.Profit > 0 THEN t.TripID END),
+        AtRiskTrips        = COUNT(DISTINCT CASE WHEN lc.rn = 1 AND lc.Profit <= 0 THEN t.TripID END)
       FROM dbo.Trips t
       LEFT JOIN LatestCost lc
         ON lc.TripID = t.TripID
@@ -36,18 +38,31 @@ export async function GET() {
     `);
 
     const row = result.recordset[0] || {};
+    const totalMiles = Number(row.TotalMiles ?? 0);
+    const totalRevenue = Number(row.TotalRevenue ?? 0);
+    const totalCost = Number(row.TotalCost ?? 0);
+    const totalProfit = Number(row.TotalProfit ?? 0);
+
+    const rpm = totalMiles > 0 ? totalRevenue / totalMiles : 0;
+    const cpm = totalMiles > 0 ? totalCost / totalMiles : 0;
+    const marginPct = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
 
     return NextResponse.json({
       ok: true,
       metrics: {
         totalTrips: row.TotalTrips ?? 0,
         tripsWithCost: row.TripsWithCost ?? 0,
-        totalMiles: row.TotalMiles ?? 0,
+        totalMiles,
         totalRequiredRev: Number(row.TotalRequiredRev ?? 0),
         totalMinRev: Number(row.TotalMinRev ?? 0),
-        totalRevenue: Number(row.TotalRevenue ?? 0),
-        totalCost: Number(row.TotalCost ?? 0),
-        totalProfit: Number(row.TotalProfit ?? 0),
+        totalRevenue,
+        totalCost,
+        totalProfit,
+        rpm,
+        cpm,
+        marginPct,
+        profitableTrips: row.ProfitableTrips ?? 0,
+        atRiskTrips: row.AtRiskTrips ?? 0,
       },
     });
   } catch (err) {
