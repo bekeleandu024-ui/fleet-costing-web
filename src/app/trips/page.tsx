@@ -116,26 +116,41 @@ export default function TripsPage() {
       ) : (
         <div className="overflow-x-auto border border-slate-800 rounded-lg">
           <table className="min-w-full text-sm">
-            <thead className="bg-slate-900/80">
-              <tr>
-                <th className="px-3 py-2 text-left">TripID</th>
-                <th className="px-3 py-2 text-left">Driver</th>
-                <th className="px-3 py-2 text-left">Unit</th>
-                <th className="px-3 py-2 text-right">Miles</th>
-                <th className="px-3 py-2 text-right">Req. Rev</th>
-                <th className="px-3 py-2 text-right">Total Cost</th>
-                <th className="px-3 py-2 text-right">Profit</th>
-                <th className="px-3 py-2 text-center">Manual?</th>
-                <th className="px-3 py-2 text-left">Reason</th>
-                <th className="px-3 py-2 text-center">Actions</th>
-              </tr>
-            </thead>
+           <thead className="bg-slate-900/80">
+  <tr>
+    <th className="px-3 py-2 text-left">TripID</th>
+    <th className="px-3 py-2 text-left">Driver</th>
+    <th className="px-3 py-2 text-left">Unit</th>
+
+    {/* NEW */}
+    <th className="px-3 py-2 text-left">Origin → Destination</th>
+    <th className="px-3 py-2 text-left">Customer</th>
+    <th className="px-3 py-2 text-right">Order Rev</th>
+
+    <th className="px-3 py-2 text-right">Miles</th>
+    <th className="px-3 py-2 text-right">Req. Rev</th>
+    <th className="px-3 py-2 text-right">Total Cost</th>
+    <th className="px-3 py-2 text-right">Profit</th>
+    <th className="px-3 py-2 text-center">Manual?</th>
+    <th className="px-3 py-2 text-left">Reason</th>
+    <th className="px-3 py-2 text-center">Actions</th>
+  </tr>
+</thead>
+
             <tbody>
               {trips.map((t) => (
                 <tr key={t.TripID} className="border-t border-slate-800">
                   <td className="px-3 py-2">{t.TripID}</td>
                   <td className="px-3 py-2">{t.DriverName}</td>
                   <td className="px-3 py-2">{t.UnitNumber}</td>
+                  <td className="px-3 py-2">
+  {t.Origin && t.Destination ? `${t.Origin} → ${t.Destination}` : ''}
+</td>
+<td className="px-3 py-2">{t.CustomerName ?? ''}</td>
+<td className="px-3 py-2 text-right">
+  {t.OrderRevenue != null ? t.OrderRevenue.toFixed(2) : ''}
+</td>
+
                   <td className="px-3 py-2 text-right">{t.Miles ?? ''}</td>
                   <td className="px-3 py-2 text-right">
                     {t.RequiredRevenue?.toFixed?.(2) ?? ''}
